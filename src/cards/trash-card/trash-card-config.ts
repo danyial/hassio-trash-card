@@ -1,4 +1,4 @@
-import { array, assign, boolean, integer, literal, object, optional, string, union } from 'superstruct';
+import { any, array, assign, boolean, integer, literal, object, optional, string, union } from 'superstruct';
 import { defaultConfigStruct } from '../../utils/form/defaultConfigStruct';
 
 import type { ItemSettings } from '../../utils/itemSettings';
@@ -41,6 +41,20 @@ const COLORMODES = [
   'icon'
 ] as const;
 
+const actionConfigStruct = object({
+  action: union([
+    literal('more-info'),
+    literal('navigate'),
+    literal('url'),
+    literal('call-service'),
+    literal('none')
+  ]),
+  navigation_path: optional(string()),
+  url_path: optional(string()),
+  service: optional(string()),
+  service_data: optional(any())
+});
+
 interface TrashCardConfig {
   entities?: string[];
   pattern?: ItemSettings[];
@@ -70,6 +84,7 @@ interface TrashCardConfig {
   only_all_day_events?: boolean;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
+  double_tap_action?: ActionConfig;
 }
 
  type CardStyleConfig = Pick<TrashCardConfig, 'hide_time_range' | 'day_style' | 'day_style_format' | 'layout' | 'color_mode' | 'icon_size' | 'with_label'>;
@@ -100,6 +115,9 @@ const entityCardConfigStruct = assign(
     icon_size: optional(integer()),
     with_label: optional(boolean()),
     only_all_day_events: optional(boolean()),
+    tap_action: optional(actionConfigStruct),
+    hold_action: optional(actionConfigStruct),
+    double_tap_action: optional(actionConfigStruct),
     pattern: optional(array(
       object({
         color: optional(string()),

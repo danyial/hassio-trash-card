@@ -7,6 +7,8 @@ import { defaultHaCardStyle } from '../../../utils/defaultHaCardStyle';
 import { getColoredStyle } from '../../../utils/getColoredStyle';
 import { daysTill } from '../../../utils/daysTill';
 import { BaseItemElement } from './BaseItemElement';
+import { handleAction } from '../../../utils/handleAction';
+import { actionHandler, type ActionHandlerEvent } from '../../../utils/actionHandler';
 
 @customElement(`${TRASH_CARD_NAME}-icon-card`)
 class IconCard extends BaseItemElement<{ nextEvent: boolean }> {
@@ -41,7 +43,15 @@ class IconCard extends BaseItemElement<{ nextEvent: boolean }> {
     this.withBackground = true;
 
     return html`
-      <ha-card style=${styleMap(style)} class=${classMap(cssClasses)}>
+      <ha-card
+        style=${styleMap(style)}
+        class=${classMap(cssClasses)}
+        @action=${this.onAction}
+        .actionHandler=${actionHandler({
+          hasHold: Boolean(this.config.hold_action),
+          hasDoubleClick: Boolean(this.config.double_tap_action)
+        })}
+      >
           <div class="container">
           <div class="content">
           <div class="icon-container">
@@ -55,6 +65,18 @@ class IconCard extends BaseItemElement<{ nextEvent: boolean }> {
         <span class="badge" >${daysTillToday}</span>
       </ha-card>
     `;
+  }
+
+  private onAction (ev: ActionHandlerEvent) {
+    if (!this.hass || !this.config) {
+      return;
+    }
+
+    const entity = this.config.entities ? this.config.entities[0] : undefined;
+    const cfg = ev.detail.action === 'hold' ? this.config.hold_action :
+      ev.detail.action === 'double_tap' ? this.config.double_tap_action : this.config.tap_action;
+
+    handleAction(this, this.hass, entity, cfg);
   }
 
   public static get styles () {

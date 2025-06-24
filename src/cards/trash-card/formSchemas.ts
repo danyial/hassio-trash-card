@@ -123,6 +123,21 @@ const getSchema = (customLocalize: LocalizeFunc, currentValues: TrashCardConfig,
       selector: {
         boolean: {}
       }
+    },
+    {
+      name: 'tap_action',
+      label: customLocalize(`editor.card.generic.tap_action`),
+      selector: { action: {} }
+    },
+    {
+      name: 'hold_action',
+      label: customLocalize(`editor.card.generic.hold_action`),
+      selector: { action: {} }
+    },
+    {
+      name: 'double_tap_action',
+      label: customLocalize(`editor.card.generic.double_tap_action`),
+      selector: { action: {} }
     }
   ];
 
