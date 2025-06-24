@@ -7,6 +7,8 @@ import { getColoredStyle } from '../../../utils/getColoredStyle';
 import { BaseItemElement } from './BaseItemElement';
 import { classMap } from 'lit/directives/class-map.js';
 import { daysTill } from '../../../utils/daysTill';
+import { handleAction } from '../../../utils/handleAction';
+import { actionHandler, type ActionHandlerEvent } from '../../../utils/actionHandler';
 
 @customElement(`${TRASH_CARD_NAME}-item-chip`)
 class ItemChip extends BaseItemElement {
@@ -53,6 +55,11 @@ class ItemChip extends BaseItemElement {
         class=${classMap(cssClasses)}
         .iconOnly=${!with_label && !content}
         .label=${with_label ? item.label : nothing}
+        @action=${this.onAction}
+        .actionHandler=${actionHandler({
+          hasHold: Boolean(this.config.hold_action),
+          hasDoubleClick: Boolean(this.config.double_tap_action)
+        })}
       >
         ${pictureUrl ?
     html`<img slot="icon" src=${pictureUrl} aria-hidden />` :
@@ -63,6 +70,18 @@ class ItemChip extends BaseItemElement {
           ></ha-state-icon>`}
         ${content}
       </ha-badge>`;
+  }
+
+  private onAction (ev: ActionHandlerEvent) {
+    if (!this.hass || !this.config) {
+      return;
+    }
+
+    const entity = this.config.entities ? this.config.entities[0] : undefined;
+    const cfg = ev.detail.action === 'hold' ? this.config.hold_action :
+      ev.detail.action === 'double_tap' ? this.config.double_tap_action : this.config.tap_action;
+
+    handleAction(this, this.hass, entity, cfg);
   }
 
   public static get styles () {

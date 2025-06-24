@@ -8,6 +8,8 @@ import { getColoredStyle } from '../../../utils/getColoredStyle';
 import { BaseItemElement } from './BaseItemElement';
 import { daysTill } from '../../../utils/daysTill';
 import { classMap } from 'lit/directives/class-map.js';
+import { handleAction } from '../../../utils/handleAction';
+import { actionHandler, type ActionHandlerEvent } from '../../../utils/actionHandler';
 
 @customElement(`${TRASH_CARD_NAME}-item-card`)
 class ItemCard extends BaseItemElement {
@@ -42,7 +44,15 @@ class ItemCard extends BaseItemElement {
     const contentClasses = { vertical: layout === 'vertical' };
 
     return html`
-      <ha-card style=${styleMap(style)} class=${classMap(cssClasses)}>
+      <ha-card
+        style=${styleMap(style)}
+        class=${classMap(cssClasses)}
+        @action=${this.onAction}
+        .actionHandler=${actionHandler({
+          hasHold: Boolean(this.config.hold_action),
+          hasDoubleClick: Boolean(this.config.double_tap_action)
+        })}
+      >
         <div class="background" aria-labelledby="info" ></div>
         <div class="container">
           <div class="content ${classMap(contentClasses)}" >
@@ -57,6 +67,18 @@ class ItemCard extends BaseItemElement {
         </div>
       </ha-card>
     `;
+  }
+
+  private onAction (ev: ActionHandlerEvent) {
+    if (!this.hass || !this.config) {
+      return;
+    }
+
+    const entity = this.config.entities ? this.config.entities[0] : undefined;
+    const cfg = ev.detail.action === 'hold' ? this.config.hold_action :
+      ev.detail.action === 'double_tap' ? this.config.double_tap_action : this.config.tap_action;
+
+    handleAction(this, this.hass, entity, cfg);
   }
 
   public static get styles () {

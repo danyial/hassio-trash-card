@@ -118,9 +118,10 @@ All the options listed below are available in the lovelace editor, but configuri
 | `debug`            | boolean | `false`   | Option to enable debug mode to help fixing bugs ;) . |
 | `icon_size`            | integer | 40 | Size of the icons in px if you choose `card_style` as `icon` . |
 | `with_label`            | boolean | `true` | Option to display the label in the card or chip style. |
+| `tap_action`            | [Action](https://www.home-assistant.io/dashboards/actions/) | `more-info` | Action triggered on tap. |
+| `hold_action`           | [Action](https://www.home-assistant.io/dashboards/actions/) | `more-info` | Action triggered on hold. |
+| `double_tap_action`     | [Action](https://www.home-assistant.io/dashboards/actions/) | `none` | Action triggered on double tap. |
 | `pattern`          | array of [Pattern](#pattern)                               | Required    | Pattern to detect the kind of trash and how to display it.|
-
-
 #### Pattern
 
 
@@ -170,6 +171,12 @@ color_mode: background
 items_per_row: 4
 refresh_rate: 60
 with_label: true
+tap_action:
+  action: more-info
+hold_action:
+  action: more-info
+double_tap_action:
+  action: none
 filter_events: false
 use_summary: false
 hide_time_range: false
