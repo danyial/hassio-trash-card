@@ -9,6 +9,7 @@ import { getCalendarData } from '../../utils/getCalendarData';
 import { getTimeZoneOffset } from '../../utils/getTimeZoneOffset';
 import { fireEvent } from '../../utils/fireEvent';
 import { hasEntities } from '../../utils/hasEntities';
+import { handleAction } from '../../utils/handleAction';
 
 import './container';
 import './items/empty';
@@ -197,6 +198,16 @@ export class TrashCard extends LitElement {
     fireEvent(this, 'card-visibility-changed', { value: true });
   }
 
+  private readonly handleTap = () => {
+    if (!this.hass || !this.config) {
+      return;
+    }
+
+    const entity = this.config.entities ? this.config.entities[0] : undefined;
+
+    handleAction(this, this.hass, entity, this.config.tap_action);
+  };
+
   protected render () {
     if (!this.config || !this.hass) {
       return nothing;
@@ -205,24 +216,24 @@ export class TrashCard extends LitElement {
     const cardStyle = this.config.card_style;
 
     if (cardStyle === 'chip') {
-      return html`<trash-card-chips-container 
-        .config=${this.config} 
-        .items=${this.currentItems} 
+      return html`<div @click=${this.handleTap}><trash-card-chips-container
+        .config=${this.config}
+        .items=${this.currentItems}
         .hass=${this.hass}
-      ></trash-card-chips-container>`;
+      ></trash-card-chips-container></div>`;
     }
     if (cardStyle === 'icon') {
-      return html`<trash-card-icons-container 
-        .config=${this.config} 
-        .items=${this.currentItems} 
+      return html`<div @click=${this.handleTap}><trash-card-icons-container
+        .config=${this.config}
+        .items=${this.currentItems}
         .hass=${this.hass}
-      ></trash-card-icons-container>`;
+      ></trash-card-icons-container></div>`;
     }
 
-    return html`<trash-card-cards-container 
-      .config=${this.config} 
-      .items=${this.currentItems} 
+    return html`<div @click=${this.handleTap}><trash-card-cards-container
+      .config=${this.config}
+      .items=${this.currentItems}
       .hass=${this.hass}
-    ></trash-card-cards-container>`;
+    ></trash-card-cards-container></div>`;
   }
 }

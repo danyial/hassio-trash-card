@@ -2,6 +2,7 @@ import { array, assign, boolean, integer, literal, object, optional, string, uni
 import { defaultConfigStruct } from '../../utils/form/defaultConfigStruct';
 
 import type { ItemSettings } from '../../utils/itemSettings';
+import type { ActionConfig } from '../../utils/handleAction';
 
 const LAYOUTS = [
   'default',
@@ -67,6 +68,8 @@ interface TrashCardConfig {
   layout: any;
   type: string;
   only_all_day_events?: boolean;
+  tap_action?: ActionConfig;
+  hold_action?: ActionConfig;
 }
 
  type CardStyleConfig = Pick<TrashCardConfig, 'hide_time_range' | 'day_style' | 'day_style_format' | 'layout' | 'color_mode' | 'icon_size' | 'with_label'>;
